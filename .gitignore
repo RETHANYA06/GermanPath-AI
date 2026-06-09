@@ -1,2 +1,4 @@
 datasets/vocabulary/
 datasets/sentences/
+__pycache__/
+*.pyc
