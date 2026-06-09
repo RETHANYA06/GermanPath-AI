@@ -1,0 +1,22 @@
+A1_DICTIONARY = {
+    "ich": "I",
+    "sie": "she / they",
+    "das": "the / that",
+    "ist": "is",
+    "du": "you",
+    "nicht": "not",
+    "die": "the",
+    "es": "it",
+    "und": "and",
+    "der": "the",
+    "wir": "we",
+    "was": "what",
+    "zu": "to",
+    "er": "he",
+    "ein": "a / an",
+    "in": "in",
+    "ja": "yes",
+    "mir": "me",
+    "mit": "with",
+    "wie": "how"
+}
