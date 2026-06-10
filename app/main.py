@@ -1,22 +1,63 @@
-from data.vocabulary_engine import get_a1_words
-from data.a1_dictionary import A1_DICTIONARY
-from data.sentence_engine import get_example_sentences
+import streamlit as st
 
-print("\n===== GermanPath AI =====\n")
+from app.data.vocabulary_engine import get_a1_words
+from app.data.a1_dictionary import A1_DICTIONARY
 
-print("TOP VOCABULARY\n")
+st.set_page_config(
+    page_title="GermanPath AI",
+    page_icon="🇩🇪",
+    layout="wide"
+)
 
-words = get_a1_words(10)
+st.sidebar.title("🇩🇪 GermanPath AI")
 
-for index, word in enumerate(words, start=1):
-    meaning = A1_DICTIONARY.get(word, "Meaning not found")
-    print(f"{index}. {word} -> {meaning}")
+page = st.sidebar.radio(
+    "Navigation",
+    ["Home", "Vocabulary", "Progress"]
+)
 
-print("\nEXAMPLE SENTENCES\n")
+if page == "Home":
+    st.title("🇩🇪 GermanPath AI")
 
-sentences = get_example_sentences(5)
+    st.markdown("""
+    Learn German from A1 to B1 for free.
 
-for german, english in sentences:
-    print(f"🇩🇪 {german}")
-    print(f"🇬🇧 {english}")
-    print()
+    Features:
+    - Vocabulary Learning
+    - Example Sentences
+    - Quizzes
+    - Progress Tracking
+    - Goethe Exam Preparation
+    """)
+
+elif page == "Vocabulary":
+
+    st.title("📚 A1 Vocabulary")
+
+    words = get_a1_words(20)
+
+    for word in words:
+        meaning = A1_DICTIONARY.get(
+            word,
+            "Meaning not found"
+        )
+
+        st.success(
+            f"{word} → {meaning}"
+        )
+
+elif page == "Progress":
+
+    st.title("🎯 Progress Tracker")
+
+    st.progress(25)
+
+    st.metric(
+        "Vocabulary Learned",
+        "20 Words"
+    )
+
+    st.metric(
+        "Current Level",
+        "A1"
+    )
