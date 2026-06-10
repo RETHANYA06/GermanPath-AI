@@ -13,7 +13,12 @@ st.sidebar.title("🇩🇪 GermanPath AI")
 
 page = st.sidebar.radio(
     "Navigation",
-    ["Home", "Vocabulary", "Progress"]
+    [
+        "Home",
+        "Vocabulary",
+        "Quiz",
+        "Progress"
+    ]
 )
 
 if page == "Home":
@@ -45,6 +50,37 @@ elif page == "Vocabulary":
         st.success(
             f"{word} → {meaning}"
         )
+
+elif page == "Quiz":
+
+    from app.quizzes.quiz_engine import generate_question
+
+    st.title("📝 German Quiz")
+
+    question = generate_question()
+
+    st.subheader(
+        f"What is the meaning of '{question['word']}' ?"
+    )
+
+    answer = st.radio(
+        "Choose an answer",
+        question["options"]
+    )
+
+    if st.button("Check Answer"):
+
+        if answer == question["correct"]:
+
+            st.success(
+                "✅ Correct!"
+            )
+
+        else:
+
+            st.error(
+                f"❌ Correct Answer: {question['correct']}"
+            )
 
 elif page == "Progress":
 
