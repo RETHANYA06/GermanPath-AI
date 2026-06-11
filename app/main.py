@@ -178,24 +178,306 @@ elif page == "Quick Quiz":
 
     st.title("⚡ Quick Quiz")
 
-    st.write("10 Questions")
+    TOTAL_QUESTIONS = 10
 
-    st.info("Coming Soon")
+    if "quick_quiz" not in st.session_state:
+
+        st.session_state.quick_quiz = {
+            "current": 1,
+            "total": TOTAL_QUESTIONS,
+            "score": 0,
+            "question": generate_question(),
+            "answered": False
+        }
+
+    quiz = st.session_state.quick_quiz
+
+    if quiz["current"] > quiz["total"]:
+
+        accuracy = (
+            quiz["score"] / quiz["total"]
+        ) * 100
+
+        st.success("🎉 Quiz Completed!")
+
+        st.metric(
+            "Final Score",
+            f"{quiz['score']}/{quiz['total']}"
+        )
+
+        st.metric(
+            "Accuracy",
+            f"{accuracy:.1f}%"
+        )
+
+        if st.button("Restart Quiz"):
+
+            del st.session_state.quick_quiz
+
+            st.rerun()
+
+    else:
+
+        st.progress(
+            quiz["current"] / quiz["total"]
+        )
+
+        st.write(
+            f"Question {quiz['current']} / {quiz['total']}"
+        )
+
+        st.write(
+            f"Score: {quiz['score']}"
+        )
+
+        question = quiz["question"]
+
+        st.caption(
+            f"Topic: {question['topic']}"
+        )
+
+        st.subheader(
+            question["word"]
+        )
+
+        answer = st.radio(
+            "Choose an answer",
+            question["options"],
+            key=f"qq_{quiz['current']}"
+        )
+
+        if not quiz["answered"]:
+
+            if st.button("Check Answer"):
+
+                quiz["answered"] = True
+
+                if answer == question["correct"]:
+
+                    quiz["score"] += 1
+
+                    st.success("✅ Correct!")
+
+                else:
+
+                    st.error(
+                        f"❌ Correct: {question['correct']}"
+                    )
+
+        else:
+
+            if st.button("Next Question"):
+
+                quiz["current"] += 1
+
+                quiz["question"] = generate_question()
+
+                quiz["answered"] = False
+
+                st.rerun()
 
 
 elif page == "Practice Test":
 
     st.title("📘 Practice Test")
 
-    st.write("25 Questions")
+    TOTAL_QUESTIONS = 25
 
-    st.info("Coming Soon")
+    if "practice_test" not in st.session_state:
+
+        st.session_state.practice_test = {
+            "current": 1,
+            "total": TOTAL_QUESTIONS,
+            "score": 0,
+            "question": generate_question(),
+            "answered": False
+        }
+
+    quiz = st.session_state.practice_test
+
+    if quiz["current"] > quiz["total"]:
+
+        accuracy = (
+            quiz["score"] / quiz["total"]
+        ) * 100
+
+        st.success("🎉 Practice Test Completed!")
+
+        st.metric(
+            "Final Score",
+            f"{quiz['score']}/{quiz['total']}"
+        )
+
+        st.metric(
+            "Accuracy",
+            f"{accuracy:.1f}%"
+        )
+
+        if st.button("Restart Practice Test"):
+
+            del st.session_state.practice_test
+
+            st.rerun()
+
+    else:
+
+        st.progress(
+            quiz["current"] / quiz["total"]
+        )
+
+        st.write(
+            f"Question {quiz['current']} / {quiz['total']}"
+        )
+
+        st.write(
+            f"Score: {quiz['score']}"
+        )
+
+        question = quiz["question"]
+
+        st.caption(
+            f"Topic: {question['topic']}"
+        )
+
+        st.subheader(
+            question["word"]
+        )
+
+        answer = st.radio(
+            "Choose an answer",
+            question["options"],
+            key=f"practice_{quiz['current']}"
+        )
+
+        if not quiz["answered"]:
+
+            if st.button("Check Answer", key="practice_check"):
+
+                quiz["answered"] = True
+
+                if answer == question["correct"]:
+
+                    quiz["score"] += 1
+
+                    st.success("✅ Correct!")
+
+                else:
+
+                    st.error(
+                        f"❌ Correct: {question['correct']}"
+                    )
+
+        else:
+
+            if st.button("Next Question", key="practice_next"):
+
+                quiz["current"] += 1
+
+                quiz["question"] = generate_question()
+
+                quiz["answered"] = False
+
+                st.rerun()
 
 
 elif page == "Mock Exam":
 
     st.title("🎓 Mock Exam")
 
-    st.write("50 Questions")
+    TOTAL_QUESTIONS = 50
 
-    st.info("Coming Soon")
+    if "mock_exam" not in st.session_state:
+
+        st.session_state.mock_exam = {
+            "current": 1,
+            "total": TOTAL_QUESTIONS,
+            "score": 0,
+            "question": generate_question(),
+            "answered": False
+        }
+
+    quiz = st.session_state.mock_exam
+
+    if quiz["current"] > quiz["total"]:
+
+        accuracy = (
+            quiz["score"] / quiz["total"]
+        ) * 100
+
+        st.success("🎉 Mock Exam Completed!")
+
+        st.metric(
+            "Final Score",
+            f"{quiz['score']}/{quiz['total']}"
+        )
+
+        st.metric(
+            "Accuracy",
+            f"{accuracy:.1f}%"
+        )
+
+        if st.button("Restart Mock Exam"):
+
+            del st.session_state.mock_exam
+
+            st.rerun()
+
+    else:
+
+        st.progress(
+            quiz["current"] / quiz["total"]
+        )
+
+        st.write(
+            f"Question {quiz['current']} / {quiz['total']}"
+        )
+
+        st.write(
+            f"Score: {quiz['score']}"
+        )
+
+        question = quiz["question"]
+
+        st.caption(
+            f"Topic: {question['topic']}"
+        )
+
+        st.subheader(
+            question["word"]
+        )
+
+        answer = st.radio(
+            "Choose an answer",
+            question["options"],
+            key=f"mock_{quiz['current']}"
+        )
+
+        if not quiz["answered"]:
+
+            if st.button("Check Answer", key="mock_check"):
+
+                quiz["answered"] = True
+
+                if answer == question["correct"]:
+
+                    quiz["score"] += 1
+
+                    st.success("✅ Correct!")
+
+                else:
+
+                    st.error(
+                        f"❌ Correct: {question['correct']}"
+                    )
+
+        else:
+
+            if st.button("Next Question", key="mock_next"):
+
+                quiz["current"] += 1
+
+                quiz["question"] = generate_question()
+
+                quiz["answered"] = False
+
+                st.rerun()
