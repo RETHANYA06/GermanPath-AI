@@ -1,36 +1,35 @@
 import random
 
-from app.data.a1_dictionary import A1_DICTIONARY
+from app.data.content_loader import load_vocabulary_topics
 
 
 def generate_question():
 
-    german_word = random.choice(
-        list(A1_DICTIONARY.keys())
-    )
+    words = load_vocabulary_topics()
 
-    correct_answer = A1_DICTIONARY[german_word]
+    word = random.choice(words)
+
+    correct = word["english"]
 
     wrong_answers = []
 
     while len(wrong_answers) < 3:
 
-        candidate = random.choice(
-            list(A1_DICTIONARY.values())
-        )
+        candidate = random.choice(words)["english"]
 
         if (
-            candidate != correct_answer
+            candidate != correct
             and candidate not in wrong_answers
         ):
             wrong_answers.append(candidate)
 
-    options = wrong_answers + [correct_answer]
+    options = wrong_answers + [correct]
 
     random.shuffle(options)
 
     return {
-        "word": german_word,
-        "correct": correct_answer,
+        "topic": word["topic"],
+        "word": word["german"],
+        "correct": correct,
         "options": options
     }
