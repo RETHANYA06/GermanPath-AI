@@ -20,6 +20,7 @@ page = st.sidebar.radio(
         "Quick Quiz",
         "Practice Test",
         "Mock Exam",
+        "Reading",
         "Progress"
     ]
 )
@@ -147,6 +148,48 @@ elif page == "Quiz":
     if st.button("Next Question"):
 
         st.session_state["question"] = generate_question()
+
+        st.rerun()
+
+elif page == "Reading":
+
+    from app.reading.reading_engine import get_random_reading
+
+    st.title("📖 Reading Practice")
+
+    if "reading" not in st.session_state:
+        st.session_state.reading = get_random_reading()
+
+    reading = st.session_state.reading
+
+    st.subheader(reading["title"])
+
+    st.write(reading["passage"])
+
+    st.markdown("---")
+
+    st.write(reading["question"])
+
+    answer = st.radio(
+        "Choose an answer",
+        reading["options"]
+    )
+
+    if st.button("Check Reading Answer"):
+
+        if answer == reading["answer"]:
+
+            st.success("✅ Correct")
+
+        else:
+
+            st.error(
+                f"❌ Correct answer: {reading['answer']}"
+            )
+
+    if st.button("Next Reading"):
+
+        st.session_state.reading = get_random_reading()
 
         st.rerun()
 
