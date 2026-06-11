@@ -16,7 +16,10 @@ page = st.sidebar.radio(
     [
         "Home",
         "Vocabulary",
-        "Quiz",
+        "Flashcards",
+        "Quick Quiz",
+        "Practice Test",
+        "Mock Exam",
         "Progress"
     ]
 )
@@ -51,8 +54,34 @@ elif page == "Vocabulary":
             f"{word['german']} → {word['english']}"
         )
 
+elif page == "Flashcards":
+
+    from app.flashcards.flashcard_engine import get_flashcard
+
+    st.title("🃏 Flashcards")
+
+    if "flashcard" not in st.session_state:
+        st.session_state.flashcard = get_flashcard()
+
+    card = st.session_state.flashcard
+
+    st.subheader(card["german"])
+
+    if st.button("Show Meaning"):
+        st.success(card["english"])
+
+    if st.button("Next Flashcard"):
+        st.session_state.flashcard = get_flashcard()
+        st.rerun()
+
 # QUIZ PAGE
 elif page == "Quiz":
+
+    QUIZ_TYPES = {
+    "Quick Quiz": 10,
+    "Practice Test": 25,
+    "Mock Exam": 50
+}
 
     st.title("📝 German Quiz")
 
@@ -144,3 +173,29 @@ elif page == "Progress":
         "Topics Completed",
         "10"
     )
+
+elif page == "Quick Quiz":
+
+    st.title("⚡ Quick Quiz")
+
+    st.write("10 Questions")
+
+    st.info("Coming Soon")
+
+
+elif page == "Practice Test":
+
+    st.title("📘 Practice Test")
+
+    st.write("25 Questions")
+
+    st.info("Coming Soon")
+
+
+elif page == "Mock Exam":
+
+    st.title("🎓 Mock Exam")
+
+    st.write("50 Questions")
+
+    st.info("Coming Soon")
