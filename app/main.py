@@ -365,117 +365,111 @@ elif page == "Mock Exam":
                 st.rerun()
 
 elif page == "Reading":
- from app.reading.reading_engine import get_random_reading
 
-st.title("📖 Reading Practice")
+    st.title("📖 Reading Practice")
 
-if "reading" not in st.session_state:
-    st.session_state.reading = get_random_reading()
+    if "reading" not in st.session_state:
+        st.session_state.reading = get_random_reading()
 
-reading = st.session_state.reading
+    reading = st.session_state.reading
 
-st.subheader(
-    reading["title"]
-)
+    st.subheader(reading["title"])
 
-st.write(
-    reading["passage"]
-)
+    st.write(reading["passage"])
 
-st.markdown("---")
+    st.markdown("---")
 
-st.write(
-    reading["question"]
-)
+    st.write(reading["question"])
 
-answer = st.radio(
-    "Choose an answer",
-    reading["options"]
-)
+    answer = st.radio(
+        "Choose an answer",
+        reading["options"]
+    )
 
-if st.button("Check Reading Answer"):
+    if st.button("Check Reading Answer"):
 
-    st.session_state.stats["reading_total"] += 1
+        st.session_state.stats["reading_total"] += 1
 
-    if answer == reading["answer"]:
+        if answer == reading["answer"]:
 
-        st.session_state.stats["reading_correct"] += 1
+            st.session_state.stats["reading_correct"] += 1
 
-        st.success("✅ Correct!")
+            st.success("✅ Correct!")
 
-    else:
+        else:
 
-        st.error(
-            f"❌ Correct Answer: {reading['answer']}"
-        )
+            st.error(
+                f"❌ Correct Answer: {reading['answer']}"
+            )
 
-if st.button("Next Reading"):
+    if st.button("Next Reading"):
 
-    st.session_state.reading = get_random_reading()
+        st.session_state.reading = get_random_reading()
 
-    st.rerun()
+        st.rerun()
 
 elif page == "Progress":
+
     st.title("📊 Progress Dashboard")
 
-stats = st.session_state.stats
+    stats = st.session_state.stats
 
-st.subheader("Quiz Statistics")
+    st.subheader("Quiz Statistics")
 
-st.metric(
-    "Questions Attempted",
-    stats["quiz_total"]
-)
+    st.metric(
+        "Questions Attempted",
+        stats["quiz_total"]
+    )
 
-st.metric(
-    "Correct Answers",
-    stats["quiz_correct"]
-)
-
-if stats["quiz_total"] > 0:
-
-    quiz_accuracy = (
+    st.metric(
+        "Correct Answers",
         stats["quiz_correct"]
-        / stats["quiz_total"]
-    ) * 100
-
-    st.metric(
-        "Quiz Accuracy",
-        f"{quiz_accuracy:.1f}%"
     )
 
-st.markdown("---")
+    if stats["quiz_total"] > 0:
 
-st.subheader("Reading Statistics")
+        quiz_accuracy = (
+            stats["quiz_correct"]
+            / stats["quiz_total"]
+        ) * 100
 
-st.metric(
-    "Reading Questions",
-    stats["reading_total"]
-)
+        st.metric(
+            "Quiz Accuracy",
+            f"{quiz_accuracy:.1f}%"
+        )
 
-st.metric(
-    "Reading Correct",
-    stats["reading_correct"]
-)
+    st.markdown("---")
 
-if stats["reading_total"] > 0:
+    st.subheader("Reading Statistics")
 
-    reading_accuracy = (
+    st.metric(
+        "Reading Questions",
+        stats["reading_total"]
+    )
+
+    st.metric(
+        "Reading Correct",
         stats["reading_correct"]
-        / stats["reading_total"]
-    ) * 100
-
-    st.metric(
-        "Reading Accuracy",
-        f"{reading_accuracy:.1f}%"
     )
 
-st.markdown("---")
+    if stats["reading_total"] > 0:
 
-vocab_count = len(load_vocabulary_topics())
+        reading_accuracy = (
+            stats["reading_correct"]
+            / stats["reading_total"]
+        ) * 100
 
-st.metric(
-    "Vocabulary Words Available",
-    vocab_count
-)
+        st.metric(
+            "Reading Accuracy",
+            f"{reading_accuracy:.1f}%"
+        )
+
+    st.markdown("---")
+
+    vocab_count = len(load_vocabulary_topics())
+
+    st.metric(
+        "Vocabulary Words Available",
+        vocab_count
+    )
 

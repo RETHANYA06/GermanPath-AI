@@ -5,52 +5,41 @@ from app.reading.reading_loader import load_readings
 
 def parse_reading(text):
 
-    lines = text.splitlines()
+    lines = [
+        line.strip()
+        for line in text.splitlines()
+        if line.strip()
+    ]
 
     title = ""
     passage_lines = []
+
     question = ""
     options = []
     answer = ""
 
-    mode = None
+    if lines and lines[0].startswith("#"):
+        title = lines[0].replace("#", "").strip()
 
-    for line in lines:
+    try:
 
-        line = line.strip()
+        fragen_index = lines.index("Fragen:")
 
-        if not line:
-            continue
+        passage_lines = lines[1:fragen_index]
 
-        if line.startswith("TITLE:"):
-            title = line.replace("TITLE:", "").strip()
-            mode = None
+        question = lines[fragen_index + 1]
 
-        elif line.startswith("PASSAGE:"):
-            mode = "passage"
+        options = [
+            lines[fragen_index + 2],
+            lines[fragen_index + 3],
+            lines[fragen_index + 4],
+            lines[fragen_index + 5]
+        ]
 
-        elif line.startswith("QUESTION:"):
-            mode = "question"
+        answer = options[0]
 
-        elif line.startswith("OPTIONS:"):
-            mode = "options"
-
-        elif line.startswith("ANSWER:"):
-            mode = "answer"
-
-        else:
-
-            if mode == "passage":
-                passage_lines.append(line)
-
-            elif mode == "question":
-                question = line
-
-            elif mode == "options":
-                options.append(line)
-
-            elif mode == "answer":
-                answer = line
+    except Exception:
+        pass
 
     return {
         "title": title,
