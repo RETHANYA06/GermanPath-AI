@@ -4,6 +4,10 @@ from app.data.content_loader import load_vocabulary_topics
 from app.quizzes.quiz_engine import generate_question
 from app.data.stats import initialize_stats
 from app.reading.reading_engine import get_random_reading
+from app.data.progress_manager import (
+    load_progress,
+    save_progress
+)
 
 st.set_page_config(
     page_title="GermanPath AI",
@@ -12,7 +16,7 @@ st.set_page_config(
 )
 
 if "stats" not in st.session_state:
-    st.session_state.stats = initialize_stats()
+    st.session_state.stats = load_progress()
 
 st.sidebar.title("🇩🇪 GermanPath AI")
 
@@ -21,10 +25,12 @@ page = st.sidebar.radio(
     [
         "Home",
         "Vocabulary",
+        "Grammar",
         "Flashcards",
         "Quick Quiz",
         "Practice Test",
         "Mock Exam",
+        "Grammar Quiz",
         "Reading",
         "Progress"
     ]
@@ -58,14 +64,46 @@ elif page == "Vocabulary":
         len(words)
     )
 
+    search = st.text_input(
+        "Search Vocabulary"
+    )
+
     for word in words:
 
-        st.success(
-            f"{word['german']} → {word['english']}"
-        )
-elif page == "Flashcards":
+        if (
+            search == ""
+            or search.lower() in word["german"].lower()
+            or search.lower() in word["english"].lower()
+        ):
 
-    from app.flashcards.flashcard_engine import get_flashcard
+            st.success(
+                f"{word['german']} → {word['english']}"
+            )
+
+
+elif page == "Grammar":
+
+    from app.grammar.grammar_loader import (
+        load_grammar_topics,
+        load_grammar_content
+    )
+
+    st.title("🇩🇪 German Grammar")
+
+    topics = load_grammar_topics()
+
+    selected_topic = st.selectbox(
+        "Choose Grammar Topic",
+        topics
+    )
+
+    content = load_grammar_content(
+        selected_topic
+    )
+
+    st.markdown(content)
+    
+elif page == "Flashcards":
 
     st.title("🃏 Flashcards")
 
@@ -171,12 +209,17 @@ elif page == "Quick Quiz":
                 quiz["answered"] = True
 
                 st.session_state.stats["quiz_total"] += 1
-
+                save_progress(
+                     st.session_state.stats
+                )
                 if answer == question["correct"]:
 
                     quiz["score"] += 1
 
                     st.session_state.stats["quiz_correct"] += 1
+                    save_progress(
+                         st.session_state.stats
+                    )
 
                     st.success("✅ Correct!")
 
@@ -337,12 +380,18 @@ elif page == "Mock Exam":
                 quiz["answered"] = True
 
                 st.session_state.stats["quiz_total"] += 1
+                save_progress(
+    st.session_state.stats
+)
 
                 if answer == question["correct"]:
 
                     quiz["score"] += 1
 
                     st.session_state.stats["quiz_correct"] += 1
+                    save_progress(
+    st.session_state.stats
+)
 
                     st.success("✅ Correct!")
 
@@ -389,10 +438,16 @@ elif page == "Reading":
     if st.button("Check Reading Answer"):
 
         st.session_state.stats["reading_total"] += 1
+        save_progress(
+    st.session_state.stats
+)
 
         if answer == reading["answer"]:
 
             st.session_state.stats["reading_correct"] += 1
+            save_progress(
+    st.session_state.stats
+)
 
             st.success("✅ Correct!")
 
@@ -466,10 +521,114 @@ elif page == "Progress":
 
     st.markdown("---")
 
-    vocab_count = len(load_vocabulary_topics())
+    st.subheader("Grammar Statistics")
+
+    st.metric(
+        "Grammar Questions",
+        stats["grammar_total"]
+    )
+
+    st.metric(
+        "Grammar Correct",
+        stats["grammar_correct"]
+    )
+
+    if stats["grammar_total"] > 0:
+
+        grammar_accuracy = (
+            stats["grammar_correct"]
+            / stats["grammar_total"]
+        ) * 100
+
+        st.metric(
+            "Grammar Accuracy",
+            f"{grammar_accuracy:.1f}%"
+        )
+
+    st.markdown("---")
+
+    vocab_count = len(
+        load_vocabulary_topics()
+    )
 
     st.metric(
         "Vocabulary Words Available",
         vocab_count
     )
+
+    st.markdown("---")
+
+    if st.button("Reset Progress"):
+
+        st.session_state.stats = {
+            "quiz_correct": 0,
+            "quiz_total": 0,
+            "reading_correct": 0,
+            "reading_total": 0,
+            "grammar_correct": 0,
+            "grammar_total": 0
+        }
+
+        save_progress(
+            st.session_state.stats
+        )
+
+        st.success(
+            "Progress Reset Successfully"
+        )
+
+        st.rerun()
+
+elif page == "Grammar Quiz":
+
+    from app.grammar.grammar_quiz import get_grammar_question
+
+    st.title("📝 Grammar Quiz")
+
+    if "grammar_q" not in st.session_state:
+        st.session_state.grammar_q = get_grammar_question()
+
+    q = st.session_state.grammar_q
+
+    st.subheader(
+        q["question"]
+    )
+
+    answer = st.radio(
+        "Choose",
+        q["options"]
+    )
+
+    if st.button("Check"):
+
+        st.session_state.stats["grammar_total"] += 1
+
+        save_progress(
+            st.session_state.stats
+        )
+
+        if answer == q["answer"]:
+
+            st.session_state.stats["grammar_correct"] += 1
+
+            save_progress(
+                st.session_state.stats
+            )
+
+            st.success("✅ Correct")
+
+        else:
+
+            st.error(
+                f"❌ Correct: {q['answer']}"
+            )
+
+    if st.button("Next"):
+
+        st.session_state.grammar_q = (
+            get_grammar_question()
+        )
+
+        st.rerun()
+
 
