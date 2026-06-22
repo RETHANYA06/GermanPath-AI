@@ -5,6 +5,8 @@ from app.quizzes.quiz_engine import generate_question
 from app.data.stats import initialize_stats
 from gtts import gTTS
 import os
+import pandas as pd
+import matplotlib.pyplot as plt
 from app.flashcards.flashcard_engine import get_flashcard
 from app.reading.reading_engine import get_random_reading
 from app.data.progress_manager import (
@@ -19,8 +21,34 @@ from app.listening.listening_engine import (
 st.set_page_config(
     page_title="GermanPath AI",
     page_icon="🇩🇪",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
+st.markdown("""
+<style>
+
+.main {
+    background-color: #f8fafc;
+}
+
+.stButton > button {
+    width: 100%;
+    border-radius: 12px;
+    height: 3em;
+    font-weight: bold;
+}
+
+.stMetric {
+    border-radius: 12px;
+    padding: 10px;
+}
+
+h1, h2, h3 {
+    color: #0f172a;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 if "stats" not in st.session_state:
     st.session_state.stats = load_progress()
@@ -44,24 +72,52 @@ page = st.sidebar.radio(
         "Progress"
     ]
 )
+st.image(
+    "https://images.unsplash.com/photo-1527866512907-a35a62a0f6c2",
+    use_container_width=True
+)
 if page == "Home":
 
     st.title("🇩🇪 GermanPath AI")
 
     st.markdown("""
-    Learn German from A1 to B1 for free.
+    ## Learn German Smarter
 
-    ### Features
-
-    - Vocabulary Learning
-    - Flashcards
-    - Quick Quiz
-    - Practice Test
-    - Mock Exam
-    - Reading Practice
-    - Progress Tracking
-    - Goethe Exam Preparation
+    Interactive German learning platform for
+    Vocabulary, Grammar, Reading, Listening,
+    and Goethe Exam Preparation.
     """)
+
+    st.markdown("---")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric("📚 Words", len(load_vocabulary_topics()))
+
+    with col2:
+        st.metric("📝 Quizzes", "100+")
+
+    with col3:
+        st.metric("📖 Readings", "10+")
+
+    with col4:
+        st.metric("🎧 Listening", "10+")
+
+    st.markdown("---")
+
+    st.subheader("Available Modules")
+
+    st.write("• Vocabulary")
+    st.write("• Flashcards")
+    st.write("• Grammar")
+    st.write("• Quick Quiz")
+    st.write("• Practice Test")
+    st.write("• Mock Exam")
+    st.write("• Reading Practice")
+    st.write("• Listening Practice")
+    st.write("• Progress Tracking")
+
 elif page == "Vocabulary":
 
     st.title("📚 A1 Vocabulary")
@@ -85,9 +141,22 @@ elif page == "Vocabulary":
             or search.lower() in word["english"].lower()
         ):
 
-            st.success(
-                f"{word['german']} → {word['english']}"
-            )
+            st.markdown(
+            f"""
+            <div style="
+                padding:15px;
+                border-radius:15px;
+                background-color:#ffffff;
+                margin-bottom:10px;
+                border:1px solid #d1d5db;
+                box-shadow:0 2px 5px rgba(0,0,0,0.05);
+            ">
+                <h4>🇩🇪 {word['german']}</h4>
+                <p>🇬🇧 {word['english']}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 
 elif page == "Grammar":
@@ -307,7 +376,8 @@ elif page == "Practice Test":
             quiz["question"] = generate_question()
             quiz["answered"] = False
 
-            st.rerun() 
+            st.rerun()
+
 elif page == "Mock Exam":
 
     st.title("🎓 Mock Exam")
@@ -592,204 +662,132 @@ elif page == "Progress":
 
     st.title("📊 Progress Dashboard")
 
-    stats = st.session_state.stats
+stats = st.session_state.stats
 
-    st.subheader("Quiz Statistics")
+col1, col2 = st.columns(2)
+
+with col1:
+
+    st.subheader("📝 Quiz")
 
     st.metric(
         "Questions Attempted",
-        stats["quiz_total"]
+        stats.get("quiz_total", 0)
     )
 
     st.metric(
         "Correct Answers",
-        stats["quiz_correct"]
+        stats.get("quiz_correct", 0)
     )
 
-    if stats["quiz_total"] > 0:
-
-        quiz_accuracy = (
-            stats["quiz_correct"]
-            / stats["quiz_total"]
-        ) * 100
+    if stats.get("quiz_total", 0) > 0:
 
         st.metric(
-            "Quiz Accuracy",
-            f"{quiz_accuracy:.1f}%"
+            "Accuracy",
+            f"{(stats['quiz_correct']/stats['quiz_total'])*100:.1f}%"
         )
 
-    st.markdown("---")
+with col2:
 
-    st.subheader("Reading Statistics")
+    st.subheader("📖 Reading")
 
     st.metric(
-        "Reading Questions",
-        stats["reading_total"]
+        "Questions",
+        stats.get("reading_total", 0)
     )
 
     st.metric(
-        "Reading Correct",
-        stats["reading_correct"]
+        "Correct",
+        stats.get("reading_correct", 0)
     )
 
-    if stats["reading_total"] > 0:
-
-        reading_accuracy = (
-            stats["reading_correct"]
-            / stats["reading_total"]
-        ) * 100
+    if stats.get("reading_total", 0) > 0:
 
         st.metric(
-            "Reading Accuracy",
-            f"{reading_accuracy:.1f}%"
+            "Accuracy",
+            f"{(stats['reading_correct']/stats['reading_total'])*100:.1f}%"
         )
-    st.markdown("---")
 
-    st.subheader(
-    "Listening Statistics"
+st.markdown("---")
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    st.subheader("🎧 Listening")
+
+    st.metric(
+        "Questions",
+        stats.get("listening_total", 0)
+    )
+
+    st.metric(
+        "Correct",
+        stats.get("listening_correct", 0)
+    )
+
+    if stats.get("listening_total", 0) > 0:
+
+        st.metric(
+            "Accuracy",
+            f"{(stats['listening_correct']/stats['listening_total'])*100:.1f}%"
+        )
+
+with col2:
+
+    st.subheader("🇩🇪 Grammar")
+
+    st.metric(
+        "Questions",
+        stats.get("grammar_total", 0)
+    )
+
+    st.metric(
+        "Correct",
+        stats.get("grammar_correct", 0)
+    )
+
+    if stats.get("grammar_total", 0) > 0:
+
+        st.metric(
+            "Accuracy",
+            f"{(stats['grammar_correct']/stats['grammar_total'])*100:.1f}%"
+        )
+
+st.markdown("---")
+
+vocab_count = len(
+    load_vocabulary_topics()
 )
 
-    st.metric(
-    "Listening Questions",
-    stats.get(
-        "listening_total",
-        0
-    )
+st.metric(
+    "📚 Vocabulary Words Available",
+    vocab_count
 )
 
-    st.metric(
-        "Listening Correct",
-        stats.get(
-            "listening_correct",
-            0
-        )
+st.markdown("---")
+
+if st.button("🔄 Reset Progress"):
+
+    st.session_state.stats = {
+        "quiz_correct": 0,
+        "quiz_total": 0,
+        "reading_correct": 0,
+        "reading_total": 0,
+        "grammar_correct": 0,
+        "grammar_total": 0,
+        "listening_correct": 0,
+        "listening_total": 0
+    }
+
+    save_progress(
+        st.session_state.stats
     )
 
-    if stats.get(
-        "listening_total",
-        0
-    ) > 0:
-
-        listening_accuracy = (
-            stats["listening_correct"]
-            /
-            stats["listening_total"]
-        ) * 100
-
-        st.metric(
-            "Listening Accuracy",
-            f"{listening_accuracy:.1f}%"
-        )
-    st.markdown("---")
-
-    st.subheader("Grammar Statistics")
-
-    st.metric(
-        "Grammar Questions",
-        stats["grammar_total"]
+    st.success(
+        "Progress Reset Successfully"
     )
 
-    st.metric(
-        "Grammar Correct",
-        stats["grammar_correct"]
-    )
-
-    if stats["grammar_total"] > 0:
-
-        grammar_accuracy = (
-            stats["grammar_correct"]
-            / stats["grammar_total"]
-        ) * 100
-
-        st.metric(
-            "Grammar Accuracy",
-            f"{grammar_accuracy:.1f}%"
-        )
-
-    st.markdown("---")
-
-    vocab_count = len(
-        load_vocabulary_topics()
-    )
-
-    st.metric(
-        "Vocabulary Words Available",
-        vocab_count
-    )
-
-    st.markdown("---")
-
-    if st.button("Reset Progress"):
-
-        st.session_state.stats = {
-            "quiz_correct": 0,
-            "quiz_total": 0,
-            "reading_correct": 0,
-            "reading_total": 0,
-            "grammar_correct": 0,
-            "grammar_total": 0
-        }
-
-        save_progress(
-            st.session_state.stats
-        )
-
-        st.success(
-            "Progress Reset Successfully"
-        )
-
-        st.rerun()
-
-elif page == "Grammar Quiz":
-
-    from app.grammar.grammar_quiz import get_grammar_question
-
-    st.title("📝 Grammar Quiz")
-
-    if "grammar_q" not in st.session_state:
-        st.session_state.grammar_q = get_grammar_question()
-
-    q = st.session_state.grammar_q
-
-    st.subheader(
-        q["question"]
-    )
-
-    answer = st.radio(
-        "Choose",
-        q["options"]
-    )
-
-    if st.button("Check"):
-
-        st.session_state.stats["grammar_total"] += 1
-
-        save_progress(
-            st.session_state.stats
-        )
-
-        if answer == q["answer"]:
-
-            st.session_state.stats["grammar_correct"] += 1
-
-            save_progress(
-                st.session_state.stats
-            )
-
-            st.success("✅ Correct")
-
-        else:
-
-            st.error(
-                f"❌ Correct: {q['answer']}"
-            )
-
-    if st.button("Next"):
-
-        st.session_state.grammar_q = (
-            get_grammar_question()
-        )
-
-        st.rerun()
+    st.rerun()
 
 
