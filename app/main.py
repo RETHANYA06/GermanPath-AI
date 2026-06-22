@@ -5,6 +5,7 @@ from app.quizzes.quiz_engine import generate_question
 from app.data.stats import initialize_stats
 from gtts import gTTS
 import os
+from app.chatbot.german_tutor import ask_tutor
 import pandas as pd
 import matplotlib.pyplot as plt
 from app.flashcards.flashcard_engine import get_flashcard
@@ -69,6 +70,7 @@ page = st.sidebar.radio(
         "Listening",
         "Reading",
         "Goethe Exam",
+        "AI Tutor",
         "Progress"
     ]
 )
@@ -790,4 +792,17 @@ if st.button("🔄 Reset Progress"):
 
     st.rerun()
 
+elif page == "AI Tutor":
+
+    st.title("🤖 German AI Tutor")
+
+    question = st.text_input(
+        "Ask anything about German"
+    )
+
+    if st.button("Ask"):
+
+        answer = ask_tutor(question)
+
+        st.success(answer)
 
