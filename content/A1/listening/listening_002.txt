@@ -1,0 +1,19 @@
+TITLE: Im Supermarkt
+
+AUDIO_TEXT:
+Hallo!
+Ich heiße Tom.
+Ich gehe in den Supermarkt.
+Ich kaufe Brot und Milch.
+
+QUESTION:
+Was kauft Tom?
+
+OPTIONS:
+Brot und Milch
+Käse
+Wasser
+Obst
+
+ANSWER:
+Brot und Milch

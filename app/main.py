@@ -3,11 +3,16 @@ import streamlit as st
 from app.data.content_loader import load_vocabulary_topics
 from app.quizzes.quiz_engine import generate_question
 from app.data.stats import initialize_stats
+from app.flashcards.flashcard_engine import get_flashcard
 from app.reading.reading_engine import get_random_reading
 from app.data.progress_manager import (
     load_progress,
     save_progress
 )
+from app.listening.listening_engine import (
+    get_random_listening
+)
+
 
 st.set_page_config(
     page_title="GermanPath AI",
@@ -31,7 +36,9 @@ page = st.sidebar.radio(
         "Practice Test",
         "Mock Exam",
         "Grammar Quiz",
+        "Listening",
         "Reading",
+        "Goethe Exam",
         "Progress"
     ]
 )
@@ -210,7 +217,7 @@ elif page == "Quick Quiz":
 
                 st.session_state.stats["quiz_total"] += 1
                 save_progress(
-                     st.session_state.stats
+                    st.session_state.stats
                 )
                 if answer == question["correct"]:
 
@@ -218,7 +225,7 @@ elif page == "Quick Quiz":
 
                     st.session_state.stats["quiz_correct"] += 1
                     save_progress(
-                         st.session_state.stats
+                        st.session_state.stats
                     )
 
                     st.success("✅ Correct!")
@@ -413,6 +420,80 @@ elif page == "Mock Exam":
 
                 st.rerun()
 
+elif page == "Listening":
+
+    st.title("🎧 Listening Practice")
+
+    if "listening" not in st.session_state:
+
+        st.session_state.listening = (
+            get_random_listening()
+        )
+
+    lesson = st.session_state.listening
+
+    st.subheader(
+        lesson["title"]
+    )
+
+    st.info(
+        lesson["audio_text"]
+    )
+
+    st.markdown("---")
+
+    st.write(
+        lesson["question"]
+    )
+
+    answer = st.radio(
+        "Choose an answer",
+        lesson["options"]
+    )
+
+    if st.button(
+        "Check Listening Answer"
+    ):
+
+        if "listening_total" not in st.session_state.stats:
+            st.session_state.stats["listening_total"] = 0
+
+        if "listening_correct" not in st.session_state.stats:
+            st.session_state.stats["listening_correct"] = 0
+
+        st.session_state.stats[
+            "listening_total"
+        ] += 1
+
+        if answer == lesson["answer"]:
+
+            st.session_state.stats[
+                "listening_correct"
+            ] += 1
+
+            st.success(
+                "✅ Correct!"
+            )
+
+        else:
+
+            st.error(
+                f"❌ Correct Answer: {lesson['answer']}"
+            )
+
+        save_progress(
+            st.session_state.stats
+        )
+
+    if st.button(
+        "Next Listening"
+    ):
+
+        st.session_state.listening = (
+            get_random_listening()
+        )
+
+        st.rerun()
 elif page == "Reading":
 
     st.title("📖 Reading Practice")
@@ -462,7 +543,33 @@ elif page == "Reading":
         st.session_state.reading = get_random_reading()
 
         st.rerun()
+elif page == "Goethe Exam":
 
+    st.title("🎓 Goethe A1 Mock Exam")
+
+    st.info(
+        """
+        Exam Structure
+
+        📖 Reading : 5 Questions
+        🎧 Listening : 5 Questions
+        📝 Grammar : 5 Questions
+
+        Total: 15 Questions
+        """
+    )
+
+    st.metric(
+        "Passing Score",
+        "60%"
+    )
+
+    if st.button(
+        "Start Exam"
+    ):
+        st.success(
+            "🚀 Goethe Exam Mode Started"
+        )
 elif page == "Progress":
 
     st.title("📊 Progress Dashboard")
@@ -518,7 +625,43 @@ elif page == "Progress":
             "Reading Accuracy",
             f"{reading_accuracy:.1f}%"
         )
+    st.markdown("---")
 
+    st.subheader(
+    "Listening Statistics"
+)
+
+    st.metric(
+    "Listening Questions",
+    stats.get(
+        "listening_total",
+        0
+    )
+)
+
+    st.metric(
+        "Listening Correct",
+        stats.get(
+            "listening_correct",
+            0
+        )
+    )
+
+    if stats.get(
+        "listening_total",
+        0
+    ) > 0:
+
+        listening_accuracy = (
+            stats["listening_correct"]
+            /
+            stats["listening_total"]
+        ) * 100
+
+        st.metric(
+            "Listening Accuracy",
+            f"{listening_accuracy:.1f}%"
+        )
     st.markdown("---")
 
     st.subheader("Grammar Statistics")

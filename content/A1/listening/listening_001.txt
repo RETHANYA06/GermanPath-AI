@@ -1,0 +1,20 @@
+TITLE: Anna im Café
+
+AUDIO_TEXT:
+Hallo!
+Ich heiße Anna.
+Ich bin im Café.
+Ich trinke Kaffee.
+Der Kaffee kostet drei Euro.
+
+QUESTION:
+Was trinkt Anna?
+
+OPTIONS:
+Kaffee
+Tee
+Milch
+Wasser
+
+ANSWER:
+Kaffee

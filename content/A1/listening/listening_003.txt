@@ -1,0 +1,18 @@
+TITLE: Schule
+
+AUDIO_TEXT:
+Lisa geht zur Schule.
+Sie lernt Deutsch.
+Sie hat einen Test.
+
+QUESTION:
+Was lernt Lisa?
+
+OPTIONS:
+Deutsch
+Englisch
+Mathe
+Physik
+
+ANSWER:
+Deutsch
