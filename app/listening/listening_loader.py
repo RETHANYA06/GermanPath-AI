@@ -1,27 +1,22 @@
-import os
-
-LISTENING_PATH = "content/A1/listening"
+from pathlib import Path
 
 
-def load_listening():
+def load_listening_files():
 
-    data = []
+    folder = Path("content/A1/listening")
 
-    for file in os.listdir(LISTENING_PATH):
+    listening_files = []
 
-        if file.endswith(".txt"):
+    for file in folder.glob("*.txt"):
 
-            with open(
-                os.path.join(
-                    LISTENING_PATH,
-                    file
-                ),
-                "r",
-                encoding="utf-8"
-            ) as f:
+        with open(
+            file,
+            "r",
+            encoding="utf-8"
+        ) as f:
 
-                data.append(
-                    f.read()
-                )
+            listening_files.append(
+                f.read()
+            )
 
-    return data
+    return listening_files

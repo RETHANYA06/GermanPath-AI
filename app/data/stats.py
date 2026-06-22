@@ -7,5 +7,7 @@ def initialize_stats():
         "reading_total": 0,
         "quick_quizzes_completed": 0,
         "practice_tests_completed": 0,
-        "mock_exams_completed": 0
+        "mock_exams_completed": 0,
+        "listening_correct": 0,
+        "listening_total": 0, 
     }

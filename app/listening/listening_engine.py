@@ -1,74 +1,55 @@
 import random
-
-from app.listening.listening_loader import (
-    load_listening
-)
-
-
-def parse_listening(text):
-
-    lines = text.splitlines()
-
-    title = ""
-    audio_text = ""
-    question = ""
-    options = []
-    answer = ""
-
-    mode = None
-
-    for line in lines:
-
-        line = line.strip()
-
-        if not line:
-            continue
-
-        if line.startswith("TITLE:"):
-            title = line.replace(
-                "TITLE:",
-                ""
-            ).strip()
-
-        elif line.startswith("AUDIO_TEXT:"):
-            mode = "audio"
-
-        elif line.startswith("QUESTION:"):
-            mode = "question"
-
-        elif line.startswith("OPTIONS:"):
-            mode = "options"
-
-        elif line.startswith("ANSWER:"):
-            mode = "answer"
-
-        else:
-
-            if mode == "audio":
-                audio_text += line + "\n"
-
-            elif mode == "question":
-                question = line
-
-            elif mode == "options":
-                options.append(line)
-
-            elif mode == "answer":
-                answer = line
-
-    return {
-        "title": title,
-        "audio_text": audio_text,
-        "question": question,
-        "options": options,
-        "answer": answer
-    }
+from app.listening.listening_loader import load_listening_files
 
 
 def get_random_listening():
 
-    lessons = load_listening()
+    files = load_listening_files()
 
-    return parse_listening(
-        random.choice(lessons)
-    )
+    text = random.choice(files)
+
+    lines = [
+        line.strip()
+        for line in text.splitlines()
+        if line.strip()
+    ]
+
+    transcript = []
+    question = ""
+    options = []
+    answer = ""
+
+    mode = "transcript"
+
+    for line in lines:
+
+        if line == "QUESTION:":
+            mode = "question"
+            continue
+
+        if line == "OPTIONS:":
+            mode = "options"
+            continue
+
+        if line == "ANSWER:":
+            mode = "answer"
+            continue
+
+        if mode == "transcript":
+            transcript.append(line)
+
+        elif mode == "question":
+            question = line
+
+        elif mode == "options":
+            options.append(line)
+
+        elif mode == "answer":
+            answer = line
+
+    return {
+        "transcript": "\n".join(transcript),
+        "question": question,
+        "options": options,
+        "answer": answer
+    }

@@ -3,6 +3,8 @@ import streamlit as st
 from app.data.content_loader import load_vocabulary_topics
 from app.quizzes.quiz_engine import generate_question
 from app.data.stats import initialize_stats
+from gtts import gTTS
+import os
 from app.flashcards.flashcard_engine import get_flashcard
 from app.reading.reading_engine import get_random_reading
 from app.data.progress_manager import (
@@ -422,6 +424,13 @@ elif page == "Mock Exam":
 
 elif page == "Listening":
 
+    from app.listening.listening_engine import (
+        get_random_listening
+    )
+
+    from gtts import gTTS
+    import os
+
     st.title("🎧 Listening Practice")
 
     if "listening" not in st.session_state:
@@ -430,42 +439,39 @@ elif page == "Listening":
             get_random_listening()
         )
 
-    lesson = st.session_state.listening
+    item = st.session_state.listening
 
-    st.subheader(
-        lesson["title"]
+    audio_file = "temp_listening.mp3"
+
+    tts = gTTS(
+        text=item["transcript"],
+        lang="de"
     )
 
-    st.info(
-        lesson["audio_text"]
-    )
+    tts.save(audio_file)
+
+    st.audio(audio_file)
 
     st.markdown("---")
 
-    st.write(
-        lesson["question"]
+    st.subheader(
+        item["question"]
     )
 
     answer = st.radio(
         "Choose an answer",
-        lesson["options"]
+        item["options"]
     )
 
     if st.button(
         "Check Listening Answer"
     ):
 
-        if "listening_total" not in st.session_state.stats:
-            st.session_state.stats["listening_total"] = 0
-
-        if "listening_correct" not in st.session_state.stats:
-            st.session_state.stats["listening_correct"] = 0
-
         st.session_state.stats[
             "listening_total"
         ] += 1
 
-        if answer == lesson["answer"]:
+        if answer == item["answer"]:
 
             st.session_state.stats[
                 "listening_correct"
@@ -478,16 +484,28 @@ elif page == "Listening":
         else:
 
             st.error(
-                f"❌ Correct Answer: {lesson['answer']}"
+                f"❌ Correct Answer: {item['answer']}"
             )
 
-        save_progress(
-            st.session_state.stats
+    if st.button(
+        "Show Transcript"
+    ):
+
+        st.info(
+            item["transcript"]
         )
 
     if st.button(
         "Next Listening"
     ):
+
+        if os.path.exists(
+            audio_file
+        ):
+
+            os.remove(
+                audio_file
+            )
 
         st.session_state.listening = (
             get_random_listening()
