@@ -794,6 +794,8 @@ if st.button("🔄 Reset Progress"):
 
 elif page == "AI Tutor":
 
+    from app.chatbot.german_tutor import ask_tutor
+
     st.title("🤖 German AI Tutor")
 
     question = st.text_input(
@@ -802,7 +804,13 @@ elif page == "AI Tutor":
 
     if st.button("Ask"):
 
-        answer = ask_tutor(question)
+        with st.spinner(
+            "Thinking..."
+        ):
 
-        st.success(answer)
+            answer = ask_tutor(
+                question
+            )
+
+        st.markdown(answer)
 
