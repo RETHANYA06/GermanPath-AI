@@ -7,7 +7,10 @@ from gtts import gTTS
 import os
 from app.chatbot.german_tutor import ask_tutor
 import pandas as pd
+from streamlit_lottie import st_lottie
+import requests
 import matplotlib.pyplot as plt
+from streamlit_option_menu import option_menu
 from app.flashcards.flashcard_engine import get_flashcard
 from app.reading.reading_engine import get_random_reading
 from app.data.progress_manager import (
@@ -18,7 +21,14 @@ from app.listening.listening_engine import (
     get_random_listening
 )
 
+def load_lottie(url):
 
+    r = requests.get(url)
+
+    if r.status_code != 200:
+        return None
+
+    return r.json()
 st.set_page_config(
     page_title="GermanPath AI",
     page_icon="🇩🇪",
@@ -54,71 +64,126 @@ h1, h2, h3 {
 if "stats" not in st.session_state:
     st.session_state.stats = load_progress()
 
-st.sidebar.title("🇩🇪 GermanPath AI")
+with st.sidebar:
 
-page = st.sidebar.radio(
-    "Navigation",
-    [
-        "Home",
-        "Vocabulary",
-        "Grammar",
-        "Flashcards",
-        "Quick Quiz",
-        "Practice Test",
-        "Mock Exam",
-        "Grammar Quiz",
-        "Listening",
-        "Reading",
-        "Goethe Exam",
-        "AI Tutor",
-        "Progress"
-    ]
-)
+    st.markdown("## 🇩🇪 GermanPath AI")
+
+    page = option_menu(
+        menu_title=None,
+        options=[
+            "Home",
+            "Vocabulary",
+            "Grammar",
+            "Flashcards",
+            "Quick Quiz",
+            "Practice Test",
+            "Mock Exam",
+            "Grammar Quiz",
+            "Listening",
+            "Reading",
+            "Goethe Exam",
+            "AI Tutor",
+            "Progress"
+        ],
+        icons=[
+            "house",
+            "book",
+            "translate",
+            "card-text",
+            "lightning",
+            "clipboard-check",
+            "award",
+            "pencil-square",
+            "headphones",
+            "file-earmark-text",
+            "mortarboard",
+            "robot",
+            "bar-chart"
+        ],
+        menu_icon="globe-europe-africa",
+        default_index=0
+    )
+
+    st.markdown("---")
+    st.caption("🚀 Learn German with AI")
 st.image(
     "https://images.unsplash.com/photo-1527866512907-a35a62a0f6c2",
     use_container_width=True
 )
 if page == "Home":
 
-    st.title("🇩🇪 GermanPath AI")
-
     st.markdown("""
-    ## Learn German Smarter
-
-    Interactive German learning platform for
-    Vocabulary, Grammar, Reading, Listening,
-    and Goethe Exam Preparation.
-    """)
-
-    st.markdown("---")
+    <div style="
+        padding:40px;
+        border-radius:20px;
+        background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+        color:white;
+        text-align:center;
+        margin-bottom:20px;
+    ">
+        <h1>🇩🇪 GermanPath AI</h1>
+        <h3>Learn German with AI</h3>
+        <p>
+        Vocabulary • Grammar • Reading • Listening • AI Tutor • Goethe Prep
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.metric("📚 Words", len(load_vocabulary_topics()))
+        st.metric(
+            "📚 Words",
+            len(load_vocabulary_topics())
+        )
 
     with col2:
-        st.metric("📝 Quizzes", "100+")
+        st.metric(
+            "📝 Quizzes",
+            "100+"
+        )
 
     with col3:
-        st.metric("📖 Readings", "10+")
+        st.metric(
+            "📖 Readings",
+            "10+"
+        )
 
     with col4:
-        st.metric("🎧 Listening", "10+")
+        st.metric(
+            "🎧 Listening",
+            "10+"
+        )
 
     st.markdown("---")
 
-    st.subheader("Available Modules")
+    st.subheader("🚀 Learning Modules")
 
-    st.write("• Vocabulary")
-    st.write("• Flashcards")
-    st.write("• Grammar")
-    st.write("• Quick Quiz")
-    st.write("• Practice Test")
-    st.write("• Mock Exam")
-    st.write("• Reading Practice")
-    st.write("• Listening Practice")
-    st.write("• Progress Tracking")
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        st.success("📚 Vocabulary")
+        st.success("🃏 Flashcards")
+        st.success("🇩🇪 Grammar")
+        st.success("📝 Grammar Quiz")
+
+    with c2:
+        st.success("⚡ Quick Quiz")
+        st.success("📘 Practice Test")
+        st.success("🎓 Mock Exam")
+        st.success("📖 Reading")
+
+    with c3:
+        st.success("🎧 Listening")
+        st.success("🤖 AI Tutor")
+        st.success("📊 Progress")
+        st.success("🏆 Goethe Exam")
+
+    st.markdown("---")
+
+    st.info(
+        "🎯 Prepare for Goethe German Exams A1 → B1 with AI-powered learning."
+    )
 
 elif page == "Vocabulary":
 
@@ -664,133 +729,133 @@ elif page == "Progress":
 
     st.title("📊 Progress Dashboard")
 
-stats = st.session_state.stats
+    stats = st.session_state.stats
 
-col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2)
 
-with col1:
+    with col1:
 
-    st.subheader("📝 Quiz")
-
-    st.metric(
-        "Questions Attempted",
-        stats.get("quiz_total", 0)
-    )
-
-    st.metric(
-        "Correct Answers",
-        stats.get("quiz_correct", 0)
-    )
-
-    if stats.get("quiz_total", 0) > 0:
+        st.subheader("📝 Quiz")
 
         st.metric(
-            "Accuracy",
-            f"{(stats['quiz_correct']/stats['quiz_total'])*100:.1f}%"
+            "Questions Attempted",
+            stats.get("quiz_total", 0)
         )
-
-with col2:
-
-    st.subheader("📖 Reading")
-
-    st.metric(
-        "Questions",
-        stats.get("reading_total", 0)
-    )
-
-    st.metric(
-        "Correct",
-        stats.get("reading_correct", 0)
-    )
-
-    if stats.get("reading_total", 0) > 0:
 
         st.metric(
-            "Accuracy",
-            f"{(stats['reading_correct']/stats['reading_total'])*100:.1f}%"
+            "Correct Answers",
+            stats.get("quiz_correct", 0)
         )
 
-st.markdown("---")
+        if stats.get("quiz_total", 0) > 0:
 
-col1, col2 = st.columns(2)
+            st.metric(
+                "Accuracy",
+                f"{(stats['quiz_correct']/stats['quiz_total'])*100:.1f}%"
+            )
 
-with col1:
+    with col2:
 
-    st.subheader("🎧 Listening")
-
-    st.metric(
-        "Questions",
-        stats.get("listening_total", 0)
-    )
-
-    st.metric(
-        "Correct",
-        stats.get("listening_correct", 0)
-    )
-
-    if stats.get("listening_total", 0) > 0:
+        st.subheader("📖 Reading")
 
         st.metric(
-            "Accuracy",
-            f"{(stats['listening_correct']/stats['listening_total'])*100:.1f}%"
+            "Questions",
+            stats.get("reading_total", 0)
         )
-
-with col2:
-
-    st.subheader("🇩🇪 Grammar")
-
-    st.metric(
-        "Questions",
-        stats.get("grammar_total", 0)
-    )
-
-    st.metric(
-        "Correct",
-        stats.get("grammar_correct", 0)
-    )
-
-    if stats.get("grammar_total", 0) > 0:
 
         st.metric(
-            "Accuracy",
-            f"{(stats['grammar_correct']/stats['grammar_total'])*100:.1f}%"
+            "Correct",
+            stats.get("reading_correct", 0)
         )
 
-st.markdown("---")
+        if stats.get("reading_total", 0) > 0:
 
-vocab_count = len(
-    load_vocabulary_topics()
-)
+            st.metric(
+                "Accuracy",
+                f"{(stats['reading_correct']/stats['reading_total'])*100:.1f}%"
+            )
 
-st.metric(
-    "📚 Vocabulary Words Available",
-    vocab_count
-)
+    st.markdown("---")
 
-st.markdown("---")
+    col1, col2 = st.columns(2)
 
-if st.button("🔄 Reset Progress"):
+    with col1:
 
-    st.session_state.stats = {
-        "quiz_correct": 0,
-        "quiz_total": 0,
-        "reading_correct": 0,
-        "reading_total": 0,
-        "grammar_correct": 0,
-        "grammar_total": 0,
-        "listening_correct": 0,
-        "listening_total": 0
-    }
+        st.subheader("🎧 Listening")
 
-    save_progress(
-        st.session_state.stats
+        st.metric(
+            "Questions",
+            stats.get("listening_total", 0)
+        )
+
+        st.metric(
+            "Correct",
+            stats.get("listening_correct", 0)
+        )
+
+        if stats.get("listening_total", 0) > 0:
+
+            st.metric(
+                "Accuracy",
+                f"{(stats['listening_correct']/stats['listening_total'])*100:.1f}%"
+            )
+
+    with col2:
+
+        st.subheader("🇩🇪 Grammar")
+
+        st.metric(
+            "Questions",
+            stats.get("grammar_total", 0)
+        )
+
+        st.metric(
+            "Correct",
+            stats.get("grammar_correct", 0)
+        )
+
+        if stats.get("grammar_total", 0) > 0:
+
+            st.metric(
+                "Accuracy",
+                f"{(stats['grammar_correct']/stats['grammar_total'])*100:.1f}%"
+            )
+
+    st.markdown("---")
+
+    vocab_count = len(
+        load_vocabulary_topics()
     )
 
-    st.success(
-        "Progress Reset Successfully"
+    st.metric(
+        "📚 Vocabulary Words Available",
+        vocab_count
     )
 
-    st.rerun()
+    st.markdown("---")
+
+    if st.button("🔄 Reset Progress"):
+
+        st.session_state.stats = {
+            "quiz_correct": 0,
+            "quiz_total": 0,
+            "reading_correct": 0,
+            "reading_total": 0,
+            "grammar_correct": 0,
+            "grammar_total": 0,
+            "listening_correct": 0,
+            "listening_total": 0
+        }
+
+        save_progress(
+            st.session_state.stats
+        )
+
+        st.success(
+            "Progress Reset Successfully"
+        )
+
+        st.rerun()
 
 elif page == "AI Tutor":
 
@@ -802,15 +867,30 @@ elif page == "AI Tutor":
         "Ask anything about German"
     )
 
-    if st.button("Ask"):
+    lottie_ai = load_lottie(
+    "https://assets9.lottiefiles.com/packages/lf20_jcikwtux.json"
+)
 
-        with st.spinner(
-            "Thinking..."
-        ):
+if st.button("Ask"):
 
-            answer = ask_tutor(
-                question
-            )
+    animation_placeholder = st.empty()
 
-        st.markdown(answer)
+    with animation_placeholder.container():
+
+        st_lottie(
+            lottie_ai,
+            height=200,
+            key="ai_loading"
+        )
+
+    answer = ask_tutor(question)
+
+    animation_placeholder.empty()
+
+    st.chat_message("assistant").write(
+    answer
+)
+    st.chat_message("user").write(
+    question
+)
 
