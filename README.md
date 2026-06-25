@@ -26,20 +26,21 @@ HTML, CSS, JavaScript (frontend if applicable)
 dotenv for API key management
 
 📂 Project Structure
-GermanPath-AI/
+  GermanPath-AI/
+  
 │
 ├── app.py / main.py
 ├── ai_model.py
 ├── translator.py
 ├── chatbot.py
-│
+
 ├── templates/
 │   └── index.html
-│
+
 ├── static/
 │   ├── style.css
 │   └── script.js
-│
+
 ├── .env
 ├── requirements.txt
 └── README.md
