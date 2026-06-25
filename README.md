@@ -24,6 +24,7 @@ Google Gemini API (Generative AI)
 Flask / FastAPI (if backend used)
 HTML, CSS, JavaScript (frontend if applicable)
 dotenv for API key management
+
 📂 Project Structure
 GermanPath-AI/
 │
